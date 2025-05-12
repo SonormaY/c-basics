@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,11 @@ int main() {
 
   char name[] = "Sonorma";
   printf("Hello, %s\n", name);
+
+  bool isTuesday = true;
+  if (isTuesday) {
+    printf("Today is tuesday\n");
+  }
 
   return EXIT_SUCCESS;
 }
