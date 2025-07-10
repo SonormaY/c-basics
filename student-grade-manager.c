@@ -12,7 +12,8 @@ struct Student {
   char grade;
 };
 
-struct Student search_student_by_id(int, struct Student[MAX_STUDENTS]);
+struct Student search_student_by_id(int, struct Student[], int);
+struct Student get_top_student(struct Student[], int);
 void print_student(struct Student);
 int get_single_char();
 void clear_stream();
@@ -36,15 +37,16 @@ int main(void) {
       fflush(stdout);
       system("clear");
       printf("Student add menu\nEnter student name: ");
-      scanf("%[^\n]s", &students[last_added].name);
+      scanf("%s", &students[last_added].name);
       printf("Enter your studentID: ");
       scanf("%d", &students[last_added].id);
       for (int i = 0; i < 3; i++) {
+        clear_stream();
         printf("Enter exam %d grade: ", i + 1);
-        scanf("%d", &students[last_added].exams[i]);
+        scanf(" %d", &students[last_added].exams[i]);
       }
       clear_stream();
-      float average;
+      float average = 0.0f;
       for (int i = 0; i < 3; i++) {
         average += students[last_added].exams[i];
       }
@@ -81,18 +83,32 @@ int main(void) {
       break;
 
     case 3:
+      system("clear");
       printf("Enter student id to search: ");
       int id;
       scanf("%d", &id);
       clear_stream();
-      struct Student result = search_student_by_id(id, students);
+      struct Student result = search_student_by_id(id, students, last_added);
       system("clear");
-      print_student(result);
-      printf("Press Enter to continue...");
+      if (result.grade == 'N') {
+        printf("Student not found");
+      } else {
+        print_student(result);
+      }
+      printf("\nPress Enter to continue...");
       get_single_char();
       break;
 
     case 4:
+      system("clear");
+      struct Student result2 = get_top_student(students, last_added);
+      if (result.grade == 'N') {
+        printf("No students in DB!");
+      } else {
+        print_student(result2);
+      }
+      printf("\nPress Enter to continue");
+      get_single_char();
       break;
 
     default:
@@ -111,9 +127,9 @@ void print_student(struct Student student) {
   }
 }
 
-struct Student search_student_by_id(int id,
-                                    struct Student students[MAX_STUDENTS]) {
-  for (int i = 0; i < MAX_STUDENTS; i++) {
+struct Student search_student_by_id(int id, struct Student students[],
+                                    int count) {
+  for (int i = 0; i < count; i++) {
     if (students[i].id == id) {
       return students[i];
     }
@@ -121,6 +137,18 @@ struct Student search_student_by_id(int id,
   struct Student null;
   null.grade = 'N';
   return null;
+}
+
+struct Student get_top_student(struct Student students[], int count) {
+  struct Student top_student;
+  top_student.average = 0;
+  top_student.grade = 'N';
+  for (int i = 0; i < count; i++) {
+    if (students[i].average > top_student.average) {
+      top_student = students[i];
+    }
+  }
+  return top_student;
 }
 
 int get_single_char() {
